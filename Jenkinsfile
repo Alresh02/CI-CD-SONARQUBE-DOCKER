@@ -2,34 +2,40 @@ pipeline {
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('sonarcloud-token')   // Jenkins credential ID
+        SONAR_TOKEN = credentials('sonarcloud-token')   // Jenkins secret ID
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds-token')
-        DOCKER_IMAGE = "alresh02/ci-cd-sonar-docker-python"
+        DOCKER_IMAGE = "reshars/ci-cd-sonar-python"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Alresh02/CI-CD-SONARQUBE-DOCKER.git'
+                checkout scm
             }
         }
 
         stage('Install dependencies & Run Tests') {
             steps {
-                sh 'pip install -r requirements.txt'
-                sh 'pytest --maxfail=1 --disable-warnings -q'
+                // Use bat on Windows
+                bat '''
+                python -m pip install --upgrade pip
+                python -m pip install -r requirements.txt
+                pytest --maxfail=1 --disable-warnings -q
+                '''
             }
         }
 
         stage('SonarCloud Analysis') {
             steps {
                 withSonarQubeEnv('SonarCloud') {
-                    sh """
-                        sonar-scanner \
-                          -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER \
-                          -Dsonar.organization=alresh02 \
-                          -Dsonar.host.url=https://sonarcloud.io \
-                          -Dsonar.login=${SONAR_TOKEN}
+                    // If you installed SonarScanner on the Windows agent, run sonar-scanner.bat
+                    // Otherwise use the Docker scanner (see notes below).
+                    bat """
+                    sonar-scanner.bat \
+                      -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER \
+                      -Dsonar.organization=alresh02 \
+                      -Dsonar.host.url=https://sonarcloud.io \
+                      -Dsonar.login=%SONAR_TOKEN%
                     """
                 }
             }
@@ -37,19 +43,19 @@ pipeline {
 
         stage('Docker Build & Push') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-creds') {
-                        def app = docker.build("${DOCKER_IMAGE}:${env.BUILD_NUMBER}")
-                        app.push()
-                        app.push("latest")
-                    }
-                }
+                bat """
+                docker build -t ${env.DOCKER_IMAGE}:$BUILD_NUMBER .
+                docker login -u %DOCKERHUB_CREDENTIALS_USR% -p %DOCKERHUB_CREDENTIALS_PSW%
+                docker tag ${env.DOCKER_IMAGE}:$BUILD_NUMBER ${env.DOCKER_IMAGE}:latest
+                docker push ${env.DOCKER_IMAGE}:$BUILD_NUMBER
+                docker push ${env.DOCKER_IMAGE}:latest
+                """
             }
         }
 
-        stage('Deploy (Run Locally)') {
+        stage('Deploy Container') {
             steps {
-                sh "docker run -d -p 8000:8000 ${DOCKER_IMAGE}:latest"
+                bat "docker run -d -p 8000:8000 ${env.DOCKER_IMAGE}:latest"
             }
         }
     }
