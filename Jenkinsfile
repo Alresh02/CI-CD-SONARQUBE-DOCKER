@@ -16,27 +16,34 @@ pipeline {
 
         stage('Install dependencies & Run Tests') {
             steps {
-                // Use bat on Windows
                 bat '''
-                python -m pip install --upgrade pip
-                python -m pip install -r requirements.txt
-                pytest --maxfail=1 --disable-warnings -q
+                    python -m venv .venv
+                    call .venv\\Scripts\\activate.bat
+                    python -m pip install --upgrade pip
+                    pip install -r requirements.txt
+                    python -m pytest --maxfail=1 --disable-warnings -q
                 '''
             }
         }
+}
 
         stage('SonarCloud Analysis') {
             steps {
                 withSonarQubeEnv('SonarCloud') {
-                    // If you installed SonarScanner on the Windows agent, run sonar-scanner.bat
-                    // Otherwise use the Docker scanner (see notes below).
-                    bat """
-                    sonar-scanner.bat \
-                      -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER \
-                      -Dsonar.organization=alresh02 \
-                      -Dsonar.host.url=https://sonarcloud.io \
-                      -Dsonar.login=%SONAR_TOKEN%
-                    """
+                    bat '''
+                    call .venv\\Scripts\\activate.bat
+                    python -m pip install sonar-scanner    REM optional if you want python wrapper; otherwise use sonar-scanner.bat or docker scanner
+                    sonar-scanner.bat -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER -Dsonar.organization=alresh02 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=%SONAR_TOKEN%
+                    '''
+                }
+            }
+        }
+    }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
