@@ -53,7 +53,7 @@ pipeline {
         // waitForQualityGate requires SonarQube plugin + Sonar webhook to Jenkins
         script {
           // timeout to avoid hanging indefinitely
-          timeout(time: 30, unit: 'MINUTES') {
+          timeout(time: 25, unit: 'MINUTES') {
             def qg = waitForQualityGate()   // remove webhookSecretId unless you configured it
             if (qg.status != 'OK') {
               error "Quality Gate failed: ${qg.status}"
