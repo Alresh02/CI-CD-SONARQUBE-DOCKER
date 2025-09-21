@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         SONAR_TOKEN = credentials('sonarcloud-token')   // Jenkins secret ID
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds-token')
-        DOCKER_IMAGE = "reshars/ci-cd-sonar-python"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-token')
+        DOCKER_IMAGE = "reshars/ci-cd-sonar-docker-python"
     }
 
     stages {
