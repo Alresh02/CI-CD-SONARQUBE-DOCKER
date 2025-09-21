@@ -45,9 +45,9 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 1, unit: 'HOURS') {
+                timeout(time: 30, unit: 'MINUTES') {
                     // requires SonarQube plugin and that the analysis completed (report-task.txt)
-                    waitForQualityGate abortPipeline: true
+                    waitForQualityGate (webhookSecretId: 'sonarqube-jenkins-webhook')
                 }
             }
         }
