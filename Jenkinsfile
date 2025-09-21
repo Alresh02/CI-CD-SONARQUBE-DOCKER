@@ -32,7 +32,7 @@ pipeline {
                 withSonarQubeEnv('SonarCloud') {
                     bat '''
                     call .venv\\Scripts\\activate.bat
-                    python -m pip install sonar-scanner    REM optional if you want python wrapper; otherwise use sonar-scanner.bat or docker scanner
+                    python -m pip install sonar-scanner    // REM optional if you want python wrapper; otherwise use sonar-scanner.bat or docker scanner
                     sonar-scanner.bat -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER -Dsonar.organization=alresh02 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=%SONAR_TOKEN%
                     '''
                 }
