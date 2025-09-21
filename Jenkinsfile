@@ -25,7 +25,7 @@ pipeline {
                 '''
             }
         }
-}
+
 
         stage('SonarCloud Analysis') {
             steps {
@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-    }
+    
 
         stage('Quality Gate') {
             steps {
