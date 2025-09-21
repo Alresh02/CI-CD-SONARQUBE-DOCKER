@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('sonarcloud-token')   // Jenkins secret ID (secret text)
+        SONAR_TOKEN = credentials('sonarqube-token')   // Jenkins secret ID (secret text)
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-token') // username/password credentials ID
         DOCKER_IMAGE = "reshars/ci-cd-sonar-docker-python"
     }
@@ -32,10 +32,10 @@ pipeline {
                 script {
                       // exact name from Global Tool Configuration
                       def scannerHome = tool 'SonarQubeScanner' 
-                withSonarQubeEnv('SonarCloud') {
+                withSonarQubeEnv('mysonarqube') {
                     bat """
                       call .venv\\Scripts\\activate.bat
-                      "${scannerHome}\\bin\\sonar-scanner.bat" -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER -Dsonar.organization=alresh02 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=%SONAR_TOKEN%
+                      "${scannerHome}\\bin\\sonar-scanner.bat" -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER  -Dsonar.sources=.  -Dsonar.host.url=http://localhost:9000 -Dsonar.login=%SONAR_TOKEN%
                     """
                   }
                 }
