@@ -32,7 +32,7 @@ pipeline {
                 // Use the SonarScanner tool configured in Manage Jenkins -> Global Tool Configuration
                 script {
                     // change 'SonarScanner' below to the exact name you configured in Jenkins
-                    def scannerHome = tool name: 'SonarScanner', type: 'hudson.tools.ToolInstallation' 
+                    def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.tools.ToolInstallation' 
                     withSonarQubeEnv('SonarCloud') {
                         bat """
                             call .venv\\Scripts\\activate.bat
