@@ -29,19 +29,19 @@ pipeline {
 
         stage('SonarCloud Analysis') {
             steps {
-                // Use the SonarScanner tool configured in Manage Jenkins -> Global Tool Configuration
                 script {
-                    // change 'SonarScanner' below to the exact name you configured in Jenkins
-                    def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.tools.ToolInstallation' 
-                    withSonarQubeEnv('SonarCloud') {
-                        bat """
-                            call .venv\\Scripts\\activate.bat
-                            "${scannerHome}\\bin\\sonar-scanner.bat" -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER -Dsonar.organization=alresh02 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=%SONAR_TOKEN%
-                        """
-                    }
+                      // exact name from Global Tool Configuration
+                      def scannerHome = tool 'SonarQubeScanner' 
+                withSonarQubeEnv('SonarCloud') {
+                    bat """
+                      call .venv\\Scripts\\activate.bat
+                      "${scannerHome}\\bin\\sonar-scanner.bat" -Dsonar.projectKey=Alresh02_CI-CD-SONARQUBE-DOCKER -Dsonar.organization=alresh02 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=%SONAR_TOKEN%
+                    """
+                  }
                 }
             }
         }
+
 
         stage('Quality Gate') {
             steps {
