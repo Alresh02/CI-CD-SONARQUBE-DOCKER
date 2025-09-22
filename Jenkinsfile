@@ -82,6 +82,11 @@ pipeline {
         }
       }
     }
+    stage('Pull Docker Image') {
+      steps {
+        bat "docker pull %DOCKERHUB_REPO%:latest"
+      }
+    }
 
     stage('Deploy Container') {
       steps {
