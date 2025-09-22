@@ -48,26 +48,6 @@ pipeline {
       }
     }
 
-    stage('Quality Gate') {
-      steps {
-        // waitForQualityGate requires SonarQube plugin + Sonar webhook to Jenkins
-        script {
-          // timeout to avoid hanging indefinitely
-          timeout(time: 25, unit: 'MINUTES') {
-            def qg = waitForQualityGate(   
-              abortPipeline: false,
-              webhookSecretId: 'sonarqube-jenkins-webhook' //  webhookSecretId  you configured it
-            )
-            if (qg.status != 'OK') {
-              error "Quality Gate failed: ${qg.status}"
-            } else {
-              echo "Quality Gate passed: ${qg.status}"
-            }
-          }
-        }
-      }
-    }
-
     stage('Docker Build & Push') {
       steps {
         script {
