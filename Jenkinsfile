@@ -55,7 +55,7 @@ pipeline {
           // timeout to avoid hanging indefinitely
           timeout(time: 5, unit: 'MINUTES') {
             def qg = waitForQualityGate(   
-              abortPipeline: true,
+              abortPipeline: false,
               webhookSecretId: 'sonarqube-jenkins-webhook' //  webhookSecretId  you configured it
             )
             if (qg.status != 'OK') {
