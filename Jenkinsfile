@@ -2,7 +2,8 @@ pipeline {
   agent any
 
   environment {
-    SONAR_TOKEN = credentials('sonarqube-token')         // secret text
+    SONAR_TOKEN = credentials('sonarqube-token')       // secret text
+    DOCKERHUB_REPO = "reshars/ci-cd-sonar-docker-python" 
     DOCKERHUB_CREDENTIALS = credentials('dockerhub-token') // username/password type
     DOCKER_IMAGE = "reshars/ci-cd-sonar-docker-python"
   }
