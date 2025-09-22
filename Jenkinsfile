@@ -53,7 +53,7 @@ pipeline {
         // waitForQualityGate requires SonarQube plugin + Sonar webhook to Jenkins
         script {
           // timeout to avoid hanging indefinitely
-          timeout(time: 25, unit: 'MINUTES') {
+          timeout(time: 5, unit: 'MINUTES') {
             def qg = waitForQualityGate(   
               abortPipeline: true,
               webhookSecretId: 'sonarqube-jenkins-webhook' //  webhookSecretId  you configured it
